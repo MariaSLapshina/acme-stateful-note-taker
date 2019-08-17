@@ -30,6 +30,7 @@
                 notes: []
             }
         }
+        
         async componentDidMount(){
             const user = await fetchUser();
             const notes = await fetchNotes(user.id);
@@ -42,7 +43,7 @@
                 <Route render ={({location})=> <Nav path = {location.pathname} notes = {notes}/>}/>
                 <h1>Acme Note-taker for {user.fullName}</h1>
                 <Switch>
-                <Route exact path = '/notes' />
+                <Route exact path = '/notes'/>
                 <Route exact path = '/archived'/>
                 <Route exact path = '/notes/create'/>
                 </Switch>
