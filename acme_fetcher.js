@@ -16,6 +16,14 @@ const fetchUser = async () => {
     return user;
 }
 
-const fetchNotes = async (userId) =>{
+const getNotes = async (userId) =>{
     return (await axios.get(`${API}/users/${userId}/notes`)).data;
+}
+
+const putNotes = async ({userId, noteId, archived, text}) => {
+    return (await axios.put(`${API}/users/${userId}/notes/${noteId}`, {archived, text})).data
+}
+
+const deleteNotes = ({userId, noteId}) => {
+    return axios.delete(`${API}/users/${userId}/notes/${noteId}`)
 }
