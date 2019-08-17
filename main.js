@@ -60,11 +60,21 @@ class Create extends Component {
     constructor() {
         super()
         this.state = {
-
+            text: ''
         }
+        this.onTextUpdate = this.onTextUpdate.bind(this)
+    }
+    onTextUpdate(text){
+    this.setState({text})
     }
     render () {
-        return null
+        const { text } = this.state;
+        return (
+            <div>
+            <input type = 'text' value = {text} onChange = {(ev)=> this.onTextUpdate(ev.target.value)}/>
+            <button disabled = {!text}>Create</button>
+            </div>
+        )
     }
 }
 
@@ -97,6 +107,12 @@ class App extends Component {
         deleteNotes({ userId, noteId })
         this.setState({ notes: updateNotes })
     }
+    async onCreateNote(archived, text){
+        const userId = this.state.user.id;
+        const newNote = await postNotes({userId, archived, text})
+        
+    }
+
     render() {
         const { notes, user } = this.state
         return (
@@ -106,7 +122,7 @@ class App extends Component {
                 <Switch>
                     <Route exact path='/notes' render={() => <Notes notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>
                     <Route exact path='/archived' render={() => <Archived notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>}/>
-                    <Route exact path='/notes/create' render={() => <Create/>}/>
+                    <Route exact path='/notes/create' render={() => <Create notes = { notes } />}/>
                 </Switch>
             </HashRouter>
         )

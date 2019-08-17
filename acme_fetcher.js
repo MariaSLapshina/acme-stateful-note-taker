@@ -27,3 +27,7 @@ const putNotes = async ({userId, noteId, archived, text}) => {
 const deleteNotes = ({userId, noteId}) => {
     return axios.delete(`${API}/users/${userId}/notes/${noteId}`)
 }
+
+const postNotes = async ({userId,archived,text}) => {
+    return (await axios.post(`${API}/users/${userId}/notes`, {archived, text})).data
+}
