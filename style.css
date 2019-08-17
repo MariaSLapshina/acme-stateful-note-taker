@@ -1,0 +1,9 @@
+.selected{
+    background-color: tomato;
+    border-radius: 0.5rem;
+    color:white;
+}
+nav a{
+    padding:10px;
+    
+}
