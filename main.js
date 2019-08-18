@@ -9,10 +9,7 @@ const Nav = ({ path, notes }) => {
         if (!curnote.archived) acc++
         return acc
     }, 0);
-    const arcCount = notes.reduce((acc, curnote) => {
-        if (curnote.archived) acc++
-        return acc
-    }, 0)
+    const arcCount = notes.length - notesCount
     return (
         <nav>
             <Link to="/notes" className={path === "/notes" ? 'selected' : ''}>Notes ({notesCount})</Link>
@@ -22,32 +19,15 @@ const Nav = ({ path, notes }) => {
     )
 }
 
-const Notes = ({ notes, onUpdateNote, onDestroyNote }) => {
-    const unarchived = notes.filter((note) => !note.archived)
+const Notes = ({ notes, isArchived, onUpdateNote, onDestroyNote }) => {
+    const filteredNotes = notes.filter((note) => note.archived === isArchived)
     return (
         <ul>
-            { unarchived.map(note => {
+            { filteredNotes.map(note => {
                 return (
                     <li key={ note.id }>
                         { note.text }
-                        <button onClick={() => onUpdateNote(note.id, true, note.text)}>archive</button>
-                        <button onClick={() => onDestroyNote(note.id)}>destroy</button>
-                    </li>
-                )
-            })}
-        </ul>
-    )
-}
-
-const Archived = ({ notes, onUpdateNote, onDestroyNote }) => {
-    const archived = notes.filter((note) => note.archived)
-    return (
-        <ul>
-            { archived.map(note => {
-                return (
-                    <li key={ note.id }>
-                        { note.text }
-                        <button onClick={() => onUpdateNote(note.id, false, note.text)}>unarchive</button>
+                        <button onClick={() => onUpdateNote(note.id, !isArchived, note.text)}>{isArchived ? 'unarchive' : 'archive'}</button>
                         <button onClick={() => onDestroyNote(note.id)}>destroy</button>
                     </li>
                 )
@@ -124,8 +104,8 @@ class App extends Component {
                 <Route render={({ location }) => <Nav path={location.pathname} notes={notes} />} />
                 <h1>Acme Note-taker for {user.fullName}</h1>
                 <Switch>
-                    <Route exact path='/notes' render={() => <Notes notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>
-                    <Route exact path='/archived' render={() => <Archived notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>}/>
+                    <Route exact path='/notes' render={() => <Notes isArchived={false} notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>
+                    <Route exact path='/archived' render={() => <Notes isArchived={true} notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>}/>
                     <Route exact path='/notes/create' render={() => <Create onCreateNote={this.onCreateNote} />}/>
                 </Switch>
             </HashRouter>
