@@ -92,7 +92,6 @@ class App extends Component {
         const userId = this.state.user.id;
         const { notes } = this.state
         const newNote = await postNotes({userId, archived: false, text})
-        console.log('note created!->', newNote)
         const updatedNotes = [...notes, newNote]
         this.setState({ notes: updatedNotes })
     }
