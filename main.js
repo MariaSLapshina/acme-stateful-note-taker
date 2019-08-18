@@ -65,14 +65,14 @@ class Create extends Component {
         this.onTextUpdate = this.onTextUpdate.bind(this)
     }
     onTextUpdate(text){
-    this.setState({text})
+        this.setState({text})
     }
     render () {
-        const { text } = this.state;
+        const { text } = this.state
         return (
             <div>
             <input type = 'text' value = {text} onChange = {(ev)=> this.onTextUpdate(ev.target.value)}/>
-            <button disabled = {!text}>Create</button>
+            <button disabled = {!text} onClick = {() => this.props.onCreateNote(text)}>Create</button>
             </div>
         )
     }
@@ -87,6 +87,7 @@ class App extends Component {
         }
         this.onUpdateNote = this.onUpdateNote.bind(this)
         this.onDestroyNote = this.onDestroyNote.bind(this)
+        this.onCreateNote = this.onCreateNote.bind(this)
     }
     async componentDidMount() {
         const user = await fetchUser()
@@ -103,14 +104,17 @@ class App extends Component {
     async onDestroyNote(noteId) {
         const userId = this.state.user.id
         const { notes } = this.state
-        const updateNotes = notes.filter(note => note.id !== noteId)
+        const updatedNotes = notes.filter(note => note.id !== noteId)
         deleteNotes({ userId, noteId })
-        this.setState({ notes: updateNotes })
+        this.setState({ notes: updatedNotes })
     }
-    async onCreateNote(archived, text){
+    async onCreateNote(text){
         const userId = this.state.user.id;
-        const newNote = await postNotes({userId, archived, text})
-        
+        const { notes } = this.state
+        const newNote = await postNotes({userId, archived: false, text})
+        console.log('note created!->', newNote)
+        const updatedNotes = [...notes, newNote]
+        this.setState({ notes: updatedNotes })
     }
 
     render() {
@@ -122,7 +126,7 @@ class App extends Component {
                 <Switch>
                     <Route exact path='/notes' render={() => <Notes notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>
                     <Route exact path='/archived' render={() => <Archived notes={notes} onUpdateNote={this.onUpdateNote} onDestroyNote={this.onDestroyNote}/>}/>}/>
-                    <Route exact path='/notes/create' render={() => <Create notes = { notes } />}/>
+                    <Route exact path='/notes/create' render={() => <Create onCreateNote={this.onCreateNote} />}/>
                 </Switch>
             </HashRouter>
         )
