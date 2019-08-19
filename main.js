@@ -37,14 +37,10 @@ const Notes = ({ notes, isArchived, onUpdateNote, onDestroyNote }) => {
 }
 
 class Create extends Component {
-    constructor() {
-        super()
-        this.state = {
-            text: ''
-        }
-        this.onTextUpdate = this.onTextUpdate.bind(this)
+    state = {
+        text: ''
     }
-    onTextUpdate(text){
+    onTextUpdate = (text) => {
         this.setState({text})
     }
     render () {
@@ -59,36 +55,31 @@ class Create extends Component {
 }
 
 class App extends Component {
-    constructor() {
-        super()
-        this.state = {
-            user: {},
-            notes: []
-        }
-        this.onUpdateNote = this.onUpdateNote.bind(this)
-        this.onDestroyNote = this.onDestroyNote.bind(this)
-        this.onCreateNote = this.onCreateNote.bind(this)
+    state = {
+        user: {},
+        notes: []
     }
+
     async componentDidMount() {
         const user = await fetchUser()
         const notes = await getNotes(user.id)
         this.setState({ user, notes })
     }
-    async onUpdateNote(noteId, archived, text) {
+    onUpdateNote = async (noteId, archived, text) => {
         const userId = this.state.user.id
         const { notes } = this.state
         const updated = await putNotes({userId, noteId, archived, text})
         const updateNotes = notes.map(note => note.id === updated.id ? updated : note)
         this.setState({ notes: updateNotes })
     }
-    async onDestroyNote(noteId) {
+    onDestroyNote = async (noteId) => {
         const userId = this.state.user.id
         const { notes } = this.state
         const updatedNotes = notes.filter(note => note.id !== noteId)
         deleteNotes({ userId, noteId })
         this.setState({ notes: updatedNotes })
     }
-    async onCreateNote(text){
+    onCreateNote = async (text) => {
         const userId = this.state.user.id;
         const { notes } = this.state
         const newNote = await postNotes({userId, archived: false, text})
